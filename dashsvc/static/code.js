@@ -1,51 +1,77 @@
-$(function () {
-  var seriesOptions = [];
-  window.seriesOptions = seriesOptions
-  window.chartOptions = {
-    rangeSelector: {
-      buttons: [
-        {type: 'day', count: 1, text: '1d'},
-        {type: 'week', count: 1, text: '1w'},
-        {type: 'month', count: 1, text: '1m'},
-        {type: 'month', count: 3, text: '3m'},
-        {type: 'all', count: 1, text: 'All'}
-      ],
-      inputBoxWidth: 130,
-      inputDateFormat: '%Y-%m-%d %H:%M', //%b %e %Y %H:%M',
-      inputEditDateFormat: '%Y-%m-%d %H:%M',
-      selected: 0
-    },
-    title: { text: 'Temperatures'},
-    series: seriesOptions,
-    yAxis: {
-      min: 40.0,
-      max: 180.0
-    }
+var METRICS = [
+  {
+    metric:'R1_TOP_AVG_CAL',
+    name: 'Reactor Temp1',
+    show_celcius: true
+  },{
+    metric:'R1_BOT_AVG_CAL',
+    name: 'Reactor Temp2',
+    show_celcius: true
+  },{
+    metric:'T1_VOLUME',
+    name: 'Rector Volume',
+    scale: 0.1,
+    units: 'Gal'
+  },{
+    metric:'R2_BOT_AVG_CAL',
+    name: 'Ambient Temp',
+    show_celcius: true
+  },{
+    metric:'R1_MID_AVG_CAL',
+    name: 'Heat Xchange Temp',
+    show_celcius: true
+  },{
+    metric:'HEATER_OUTPUT_AVERAGE',
+    name: '% Heater Load',
+    units: '%'
   }
-  var seriesCounter = 0;
-  var METRICS = [
-    {
-      metric:'R1_TOP_AVG_CAL',
-      name: 'Reactor Temp1'
-    },{
-      metric:'R1_BOT_AVG_CAL',
-      name: 'Reactor Temp2'
-    },{
-      metric:'T1_VOLUME',
-      name: 'Rector Volume',
-      scale: 0.1
-    },{
-      metric:'R2_BOT_AVG_CAL',
-      name: 'Ambient Temp'
-    },{
-      metric:'R1_MID_AVG_CAL',
-      name: 'Heat Xchange Temp'
-    },{
-      metric:'HEATER_OUTPUT_AVERAGE',
-      name: '% Heater Load'
-    }
-  ]
+]
 
+var chartOptions = {
+  rangeSelector: {
+    buttons: [
+      {type: 'hour', count: 6, text: '6h'},
+      {type: 'day', count: 1, text: '1d'},
+      {type: 'week', count: 1, text: '1w'},
+      {type: 'month', count: 1, text: '1m'},
+      {type: 'month', count: 3, text: '3m'},
+      {type: 'all', count: 1, text: 'All'}
+    ],
+    inputBoxWidth: 130,
+    inputDateFormat: '%Y-%m-%d %H:%M', //%b %e %Y %H:%M',
+    inputEditDateFormat: '%Y-%m-%d %H:%M',
+    selected: 1
+  },
+  title: { text: 'Temperatures'},
+  tooltip: {
+    pointFormatter: function() {
+      var point = this;
+      window.last_point = point;
+      var y = point.y;
+      var opts = point.series.options;
+      if (opts.scale) {
+        y /= opts.scale
+      }
+      var valstr = '<b>'+y.toFixed(2)+'</b>'
+      if (opts.units) {
+        valstr += opts.units
+      }
+      if (opts.show_celcius) {
+        valstr += 'F (<b>'+ ((y - 32) * 5 / 9).toFixed(2)+'</b>C)'
+      }
+      return '<span style="color:'+point.color+'">\u25CF</span> '+opts.name+': '+
+          valstr +'<br/>'
+    }
+  },
+  series: METRICS,
+  yAxis: {
+    min: 40.0,
+    max: 180.0
+  }
+}
+
+$(function () {
+  var n_done = 0;
   console.log("Fetching data")
   $.each(METRICS, function (i, thing) {
     $.getJSON('/data.jsonp?metric=' + thing.metric + '&callback=?', function (data) {
@@ -55,15 +81,8 @@ $(function () {
           data[k][1] *= thing.scale
         }
       }
-      seriesOptions[i] = {
-        name: thing.name+' ('+thing.metric+')',
-        data: data,
-        tooltip: {
-          valueDecimals: 2
-        }
-      };
-      seriesCounter += 1;
-      if (seriesCounter === METRICS.length) {
+      thing.data = data
+      if (++n_done === METRICS.length) {
         createChart();
       }
     });
