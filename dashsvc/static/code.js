@@ -24,29 +24,39 @@ $(function () {
   }
   var seriesCounter = 0;
   var METRICS = [
-    'R1_TOP_AVG_CAL',
-    'R1_BOT_AVG_CAL',
-    'T1_VOLUME',
-    'R2_BOT_AVG_CAL',
-    'R1_MID_AVG_CAL',
-    'HEATER_OUTPUT_AVERAGE'
+    {
+      metric:'R1_TOP_AVG_CAL',
+      name: 'Reactor Temp1'
+    },{
+      metric:'R1_BOT_AVG_CAL',
+      name: 'Reactor Temp2'
+    },{
+      metric:'T1_VOLUME',
+      name: 'Rector Volume',
+      scale: 0.1
+    },{
+      metric:'R2_BOT_AVG_CAL',
+      name: 'Ambient Temp'
+    },{
+      metric:'R1_MID_AVG_CAL',
+      name: 'Heat Xchange Temp'
+    },{
+      metric:'HEATER_OUTPUT_AVERAGE',
+      name: '% Heater Load'
+    }
   ]
 
   console.log("Fetching data")
-  $.each(METRICS, function (i, metric) {
-    $.getJSON('/data.jsonp?metric=' + metric + '&callback=?', function (data) {
-      console.log("Has data: ", metric)
-      if (metric === 'T1_VOLUME') {
+  $.each(METRICS, function (i, thing) {
+    $.getJSON('/data.jsonp?metric=' + thing.metric + '&callback=?', function (data) {
+      console.log("Has data: ", thing.metric)
+      if (thing.scale) {
         for (k in data) {
-          data[k][1] /= 10
+          data[k][1] *= thing.scale
         }
       }
-      name = metric
-      if (metric === 'R2_BOT_AVG_CAL') {
-        metric += ' (Ambient)'
-      }
       seriesOptions[i] = {
-        name: metric,
+        name: thing.name+' ('+thing.metric+')',
         data: data,
         tooltip: {
           valueDecimals: 2
@@ -63,7 +73,7 @@ $(function () {
   
   html = ""
   for (idx in METRICS) {
-    el = METRICS[idx]
+    el = METRICS[idx].metric
     html += '<input type="checkbox" id="'+el+'">'+el+'</input><br>'
   }
 
