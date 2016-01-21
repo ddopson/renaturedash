@@ -40,7 +40,7 @@ var chartOptions = {
     inputBoxWidth: 130,
     inputDateFormat: '%Y-%m-%d %H:%M', //%b %e %Y %H:%M',
     inputEditDateFormat: '%Y-%m-%d %H:%M',
-    selected: 1
+    selected: 0
   },
   title: { text: 'Temperatures'},
   tooltip: {
@@ -116,11 +116,11 @@ function createChart() {
 function make_csv(tstart, tend) {
   //make_csv = (tstart, tend) ->
   //  csv = {}
-  //  for s, idx in seriesOptions
+  //  for s, idx in METRICS
   //    for [time, val] in s.data when time >= tstart and time <= tend
   //      csv[time] ||= []
   //      csv[time][idx] = val
-  //  names = [s.name for s in seriesOptions]
+  //  names = [s.name for s in METRICS]
   //  text = "DateTime,#{names.join(",")}\n"
   //  for t in Object.keys(csv).sort()
   //    tstr = (new Date(+t)).toISOString() 
@@ -128,8 +128,8 @@ function make_csv(tstart, tend) {
   //  return text
   var csv, i, idx, j, k, len, len1, len2, names, ref, ref1, ref2, s, t, text, time, tstr, val;
   csv = {};
-  for (idx = i = 0, len = seriesOptions.length; i < len; idx = ++i) {
-    s = seriesOptions[idx];
+  for (idx = i = 0, len = METRICS.length; i < len; idx = ++i) {
+    s = METRICS[idx];
     ref = s.data;
     for (j = 0, len1 = ref.length; j < len1; j++) {
       ref1 = ref[j], time = ref1[0], val = ref1[1];
@@ -144,8 +144,8 @@ function make_csv(tstart, tend) {
     (function() {
       var k, len2, results;
       results = [];
-      for (k = 0, len2 = seriesOptions.length; k < len2; k++) {
-        s = seriesOptions[k];
+      for (k = 0, len2 = METRICS.length; k < len2; k++) {
+        s = METRICS[k];
         results.push(s.name);
       }
       return results;
