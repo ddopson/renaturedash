@@ -151,12 +151,12 @@ function make_csv(tstart, tend) {
       return results;
     })()
   ];
-  text = "DateTime," + (names.join(",")) + "\n";
+  text = "UnixTime, DateTime," + (names.join(",")) + "\n";
   ref2 = Object.keys(csv).sort();
   for (k = 0, len2 = ref2.length; k < len2; k++) {
     t = ref2[k];
     tstr = (new Date(+t)).toISOString();
-    text += tstr + "," + (csv[t].join(",")) + "\n";
+    text += (t/1000) + "," + tstr + "," + (csv[t].join(",")) + "\n";
   }
   return text;
 };

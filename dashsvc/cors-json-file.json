@@ -1,0 +1,8 @@
+[
+    {
+      "origin": ["https://renature-dashboard.appspot.com"],
+      "responseHeader": ["Content-Type"],
+      "method": ["GET", "HEAD"],
+      "maxAgeSeconds": 0
+    }
+]
