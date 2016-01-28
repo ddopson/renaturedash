@@ -61,7 +61,7 @@ chartOptions =
     min: 40.0
     max: 180.0
 
-$(()->
+window.$(()->
   n_done = 0
   console.log("Fetching data")
   $.each(METRICS, (i, thing) ->
@@ -87,17 +87,18 @@ $(()->
     global:
       useUTC: false
   )
-  $('#export').append('<button type="button">Generate CSV Export</button>')
-  $('#export').append('<div id="download_link"></div>')
-  $('#export button').click(make_download)
 )
 
 window.createChart = () ->
-  console.log("CREATE_CHART")
+  console.log "CREATE_CHART"
   $('#container').highcharts('StockChart', chartOptions)
+  $('#export').append('<button type="button">Generate CSV Export</button>')
+  $('#export').append('<div id="download_link"></div>')
+  $('#export button').click(make_download)
 
 
-window.make_csv = (tstart, tend) ->
+window.make_csv =
+make_csv = (tstart, tend) ->
   csv = {}
   for s, idx in METRICS
     for [time, val] in s.data when time >= tstart and time <= tend
@@ -106,14 +107,23 @@ window.make_csv = (tstart, tend) ->
   names = [s.name for s in METRICS]
   text = "DateTime,#{names.join(",")}\n"
   for t in Object.keys(csv).sort()
-    tstr = (new Date(+t)).toISOString()
+    d = new Date(+t)
+    tstr = """#{d.toDateString()} #{d.toTimeString()}"""
     text += "#{tstr},#{csv[t].join(",")}\n"
   return text
 
+window.fmt_time =
+fmt_time = (t) ->
+  d = new Date(t)
+  return """#{d.getFullYear()}-#{d.getMonth()+1}-#{d.getDate()}T#{d.getHours()}-#{d.getMinutes()}"""
+
+window.make_download =
 make_download = () ->
+  console.log "MAKING_DOWNLOAD"
   chart = $('#container').highcharts()
-  text = make_csv(chart.axes[0].min, chart.axes[0].max)
-  blob = new Blob([text], {type: 'text/plain'})
+  [tstart, tend] = [chart.axes[0].min, chart.axes[0].max]
+  text = make_csv(tstart, tend)
+  blob = new Blob([text], {type: 'application/octet-stream .csv'})
   url = URL.createObjectURL(blob)
-  $('#download_link').html('<a href="'+url+'" download="metrics.csv">Download metrics.csv</a>')
+  $('#download_link').html("""<a href="#{url}" download="metrics-#{fmt_time(tstart)}--to--#{fmt_time(tend)}.csv">Download metrics.csv</a>""")
 
