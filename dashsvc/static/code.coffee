@@ -1,3 +1,4 @@
+window.METRICS =
 METRICS = [
   {
     metric:'R1_TOP_AVG_CAL'
@@ -27,6 +28,7 @@ METRICS = [
   }
 ]
 
+window.chartOptions =
 chartOptions =
   rangeSelector:
     buttons: [
