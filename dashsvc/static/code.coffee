@@ -1,30 +1,37 @@
+window.UNITS =
+UNITS = {
+  TempF: (val) -> "<b>#{val.toFixed(2)}</b>F (<b>#{((val - 32) * 5 / 9).toFixed(2)}</b>C)"
+  Gal: (val) -> "<b>#{val.toFixed(1)}</b>Gal (<b>#{(val*3.7854118).toFixed(0)}</b>L)"
+  Pct: (val) -> "<b>#{val.toFixed(2)}</b>%"
+}
+
 window.METRICS =
 METRICS = [
   {
     metric:'R1_TOP_AVG_CAL'
     name: 'Reactor Temp1'
-    show_celcius: true
+    units: UNITS.TempF
   },{
     metric:'R1_BOT_AVG_CAL'
     name: 'Reactor Temp2'
-    show_celcius: true
+    units: UNITS.TempF
   },{
     metric:'T1_VOLUME'
     name: 'Rector Volume'
     scale: 0.1
-    units: 'Gal'
+    units: UNITS.Gal
   },{
     metric:'R2_BOT_AVG_CAL'
     name: 'Ambient Temp'
-    show_celcius: true
+    units: UNITS.TempF
   },{
     metric:'R1_MID_AVG_CAL'
     name: 'Heat Xchange Temp'
-    show_celcius: true
+    units: UNITS.TempF
   },{
     metric:'HEATER_OUTPUT_AVERAGE'
     name: '% Heater Load'
-    units: '%'
+    units: UNITS.Pct
   }
 ]
 
@@ -52,12 +59,8 @@ chartOptions =
       opts = point.series.options
       if (opts.scale)
         y /= opts.scale
-      valstr = '<b>'+y.toFixed(2)+'</b>'
-      if (opts.units)
-        valstr += opts.units
-      if (opts.show_celcius)
-        valstr += 'F (<b>'+ ((y - 32) * 5 / 9).toFixed(2)+'</b>C)'
-      return """<span style="color:#{point.color}>\u25CF</span> #{opts.name}: #{valstr}<br/>"""
+      valstr = opts.units(y)
+      return """<span style="color:#{point.color}">\u25CF</span> #{opts.name}: #{valstr}<br/>"""
   series: METRICS
   yAxis:
     min: 40.0
