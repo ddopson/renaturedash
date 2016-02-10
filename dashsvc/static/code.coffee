@@ -94,12 +94,29 @@ window.$(()->
   )
 )
 
+$('body').append('<div id="current_data"></div>')
+
 window.createChart = () ->
   console.log "CREATE_CHART"
   $('#container').highcharts('StockChart', chartOptions)
   $('#export').append('<button type="button">Generate CSV Export</button>')
   $('#export').append('<div id="download_link"></div>')
   $('#export button').click(make_download)
+
+  text = "<table>"
+  window.chart = $('#container').highcharts()
+  for m, idx in METRICS
+    [t, v] = m.data[m.data.length - 1]
+    if (m.scale)
+      v /= m.scale
+    valstr = m.units(v)
+    valstr = valstr.replace('(', '</td><td>').replace(')', '')
+    color = chart.series[idx].color
+    text += """<tr><td>#{fmt_time(t)}</td><td><span style="color:#{color}">\u25CF</span> #{m.name}</td><td>#{valstr}</td></tr>"""
+  text += "</table>"
+  $('#current_data').html(text)
+  
+
 
 
 window.make_csv =

@@ -134,12 +134,26 @@
     });
   });
 
+  $('body').append('<div id="current_data"></div>');
+
   window.createChart = function() {
+    var j, len, m, ref, t, text, v, valstr;
     console.log("CREATE_CHART");
     $('#container').highcharts('StockChart', chartOptions);
     $('#export').append('<button type="button">Generate CSV Export</button>');
     $('#export').append('<div id="download_link"></div>');
-    return $('#export button').click(make_download);
+    $('#export button').click(make_download);
+    text = "";
+    for (j = 0, len = METRICS.length; j < len; j++) {
+      m = METRICS[j];
+      ref = m.data[-1], t = ref[0], v = ref[1];
+      if (m.scale) {
+        v /= m.scale;
+      }
+      valstr = m.units(y);
+      text += "<span style=\"color:" + point.color + "\">\u25CF</span> " + opts.name + ": " + valstr + "<br/>";
+    }
+    return $('#current_data').html(text);
   };
 
   window.make_csv = make_csv = function(tstart, tend) {
