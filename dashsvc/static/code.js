@@ -186,13 +186,13 @@
         return results;
       })()
     ];
-    text = "DateTime," + (names.join(",")) + "\n";
+    text = "DateTime,EpochTime," + (names.join(",")) + "\n";
     ref2 = Object.keys(csv).sort();
     for (l = 0, len2 = ref2.length; l < len2; l++) {
       t = ref2[l];
       d = new Date(+t);
       tstr = (d.toDateString()) + " " + (d.toTimeString());
-      text += tstr + "," + (csv[t].join(",")) + "\n";
+      text += tstr + "," + (d / 1000) + "," + (csv[t].join(",")) + "\n";
     }
     return text;
   };

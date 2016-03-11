@@ -127,11 +127,11 @@ make_csv = (tstart, tend) ->
       csv[time] ||= []
       csv[time][idx] = val
   names = [s.name for s in METRICS]
-  text = "DateTime,#{names.join(",")}\n"
+  text = "DateTime,EpochTime,#{names.join(",")}\n"
   for t in Object.keys(csv).sort()
     d = new Date(+t)
     tstr = """#{d.toDateString()} #{d.toTimeString()}"""
-    text += "#{tstr},#{csv[t].join(",")}\n"
+    text += "#{tstr},#{d/1000},#{csv[t].join(",")}\n"
   return text
 
 window.fmt_time =
