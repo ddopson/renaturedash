@@ -120,7 +120,8 @@
         }
       });
     });
-    $('body').append($('<div id="series-selector"></div>'));
+    $('body').append('<div id="series-selector"></div>');
+    $('body').append('<div id="current_data"></div>');
     html = "";
     for (j = 0, len = METRICS.length; j < len; j++) {
       el = METRICS[j];
@@ -133,8 +134,6 @@
       }
     });
   });
-
-  $('body').append('<div id="current_data"></div>');
 
   window.createChart = function() {
     var color, idx, j, len, m, ref, t, text, v, valstr;

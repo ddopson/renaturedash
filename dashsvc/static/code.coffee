@@ -81,7 +81,8 @@ window.$(()->
     )
   )
 
-  $('body').append($('<div id="series-selector"></div>'))
+  $('body').append('<div id="series-selector"></div>')
+  $('body').append('<div id="current_data"></div>')
   
   html = ""
   for el in METRICS
@@ -94,7 +95,6 @@ window.$(()->
   )
 )
 
-$('body').append('<div id="current_data"></div>')
 
 window.createChart = () ->
   console.log "CREATE_CHART"
