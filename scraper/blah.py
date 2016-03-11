@@ -56,7 +56,7 @@ obj = {}
 for fname in sys.argv[3:]:
   print >>sys.stderr, 'Reading ' + fname
   ProcessFile(fname, obj)
-if LATEST_TIME == 0:
+if LATEST_TIME == 1446350400000:
   Dump(obj)
 else:
   Dump2(obj)

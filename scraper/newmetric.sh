@@ -3,5 +3,5 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-./blah.py 0 $1 data/* > $1.json
+./blah.py 1446350400000 $1 data/* > $1.json
 gsutil cp $1.json  gs://renature-metrics-data/
