@@ -137,22 +137,26 @@
   $('body').append('<div id="current_data"></div>');
 
   window.createChart = function() {
-    var j, len, m, ref, t, text, v, valstr;
+    var color, idx, j, len, m, ref, t, text, v, valstr;
     console.log("CREATE_CHART");
     $('#container').highcharts('StockChart', chartOptions);
     $('#export').append('<button type="button">Generate CSV Export</button>');
     $('#export').append('<div id="download_link"></div>');
     $('#export button').click(make_download);
-    text = "";
-    for (j = 0, len = METRICS.length; j < len; j++) {
-      m = METRICS[j];
-      ref = m.data[-1], t = ref[0], v = ref[1];
+    text = "<table>";
+    window.chart = $('#container').highcharts();
+    for (idx = j = 0, len = METRICS.length; j < len; idx = ++j) {
+      m = METRICS[idx];
+      ref = m.data[m.data.length - 1], t = ref[0], v = ref[1];
       if (m.scale) {
         v /= m.scale;
       }
-      valstr = m.units(y);
-      text += "<span style=\"color:" + point.color + "\">\u25CF</span> " + opts.name + ": " + valstr + "<br/>";
+      valstr = m.units(v);
+      valstr = valstr.replace('(', '</td><td>').replace(')', '');
+      color = chart.series[idx].color;
+      text += "<tr><td>" + (fmt_time(t)) + "</td><td><span style=\"color:" + color + "\">\u25CF</span> " + m.name + "</td><td>" + valstr + "</td></tr>";
     }
+    text += "</table>";
     return $('#current_data').html(text);
   };
 
